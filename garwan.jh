@@ -1,0 +1,30 @@
+entity Product {
+ name String required,
+ price Double required,
+ description String,
+ gallery String
+}
+
+entity AnimalCategory {
+name Category required
+}
+
+entity Order {
+totalPrice Double required,
+createdAt ZonedDateTime
+}
+
+enum Category {
+  DOG,
+  CAT,
+  OTHER
+}
+
+relationship ManyToMany {
+    Product to Order
+    Product to AnimalCategory
+}
+
+dto * with mapstruct
+paginate * with pagination
+service * with serviceImpl

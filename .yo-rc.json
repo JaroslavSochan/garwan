@@ -1,0 +1,37 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "sk.garwan"
+    },
+    "jhipsterVersion": "6.10.1",
+    "applicationType": "monolith",
+    "baseName": "garwan",
+    "packageName": "sk.garwan",
+    "packageFolder": "sk/garwan",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": "eureka",
+    "buildTool": "maven",
+    "enableSwaggerCodegen": true,
+    "jwtSecretKey": "OTQ2MjcxOTVmNWRjMjI1ODQwYTcwZDY4NDU0ZmFhZWJmMjZhNjRiYmU4YjFiMWMzMGVjODI2ZDUxZTc0MTM3YzVlNGY2YzJmOWYzMmUxOWExMDQ4ZTM4ODgwZTZiMDIyNjEwNThkZGM4NDliZDRmNjAwY2MxNjFhNzgyOTg5Mzg=",
+    "embeddableLaunchScript": false,
+    "creationTimestamp": 1597591813356,
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "clientPackageManager": "npm",
+    "blueprints": [],
+    "skipClient": true
+  }
+}

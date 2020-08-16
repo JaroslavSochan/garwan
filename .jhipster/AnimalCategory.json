@@ -1,0 +1,32 @@
+{
+  "name": "AnimalCategory",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "Category",
+      "fieldValues": "DOG,CAT,OTHER",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "product",
+      "otherEntityRelationshipName": "animalCategory",
+      "relationshipName": "product",
+      "otherEntityField": "id",
+      "ownerSide": false
+    }
+  ],
+  "changelogDate": "20200816154305",
+  "entityTableName": "animal_category",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}
