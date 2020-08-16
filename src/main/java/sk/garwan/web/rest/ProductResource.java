@@ -85,7 +85,7 @@ public class ProductResource {
     /**
      * {@code GET  /products} : get all the products.
      *
-     * @param pageable  the pagination information.
+     * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
      */
     @GetMapping("/public/products")
@@ -109,7 +109,7 @@ public class ProductResource {
     @GetMapping("/public/products/startsWith/{startsWith}")
     public ResponseEntity<Page<ProductDTO>> getAllProductsByPrice(Pageable pageable, @NotBlank @PathVariable String startsWith) {
         log.debug("REST request to get a page of Products");
-        Page<ProductDTO> page = productService.findAllByName(pageable,startsWith);
+        Page<ProductDTO> page = productService.findAllByName(pageable, startsWith);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page);

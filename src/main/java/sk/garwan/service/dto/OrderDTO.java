@@ -3,9 +3,7 @@ package sk.garwan.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 
 /**
  * A DTO for the {@link sk.garwan.domain.Order} entity.
