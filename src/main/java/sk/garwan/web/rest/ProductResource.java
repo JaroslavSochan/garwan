@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import sk.garwan.security.AuthoritiesConstants;
 import sk.garwan.service.ProductService;
-import sk.garwan.service.dto.ProductDetailDTO;
 import sk.garwan.service.dto.ProductDTO;
+import sk.garwan.service.dto.ProductDetailDTO;
 import sk.garwan.service.dto.ProductSpecificDTO;
 import sk.garwan.web.rest.errors.BadRequestAlertException;
 

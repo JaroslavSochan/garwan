@@ -3,7 +3,6 @@ package sk.garwan.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ public class ProductDetailDTO implements Serializable {
 
     private String description;
 
-    private List<String> gallery;
+    private String gallery;
 
     private Set<AnimalCategoryDTO> animalCategories = new HashSet<>();
 
@@ -58,11 +57,11 @@ public class ProductDetailDTO implements Serializable {
         this.description = description;
     }
 
-    public List<String> getGallery() {
+    public String getGallery() {
         return gallery;
     }
 
-    public void setGallery(List<String> gallery) {
+    public void setGallery(String gallery) {
         this.gallery = gallery;
     }
 

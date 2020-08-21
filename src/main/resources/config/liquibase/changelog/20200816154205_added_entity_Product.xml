@@ -22,7 +22,7 @@
             <column name="description" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
-            <column name="gallery" type="array">
+            <column name="gallery" type="varchar(255)">
                 <constraints nullable="true"/>
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->

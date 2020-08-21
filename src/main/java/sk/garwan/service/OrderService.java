@@ -44,4 +44,6 @@ public interface OrderService {
     void delete(Long id);
 
     OrderDTO createOrUpdateOrder(OrderDTO orderDTO);
+
+    Page<OrderDTO> findAll(Pageable pageable, Long userId);
 }

@@ -62,21 +62,6 @@ public class AccountResource {
             throw new InvalidPasswordException();
         }
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-        mailService.sendActivationEmail(user);
-    }
-
-    /**
-     * {@code GET  /activate} : activate the registered user.
-     *
-     * @param key the activation key.
-     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be activated.
-     */
-    @GetMapping("/activate")
-    public void activateAccount(@RequestParam(value = "key") String key) {
-        Optional<User> user = userService.activateRegistration(key);
-        if (user.isEmpty()) {
-            throw new AccountResourceException("No user was found for this activation key");
-        }
     }
 
     /**
@@ -119,11 +104,12 @@ public class AccountResource {
             throw new EmailAlreadyUsedException();
         }
         Optional<User> user = userRepository.findOneByLogin(userLogin);
-        if (user.isEmpty()) {
+        if (user.isPresent()) {
+            userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+                userDTO.getLangKey(), userDTO.getImageUrl());
+        } else {
             throw new AccountResourceException("User could not be found");
         }
-        userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
-            userDTO.getLangKey(), userDTO.getImageUrl());
     }
 
     /**
@@ -172,9 +158,10 @@ public class AccountResource {
         Optional<User> user =
             userService.completePasswordReset(keyAndPassword.getNewPassword(), keyAndPassword.getKey());
 
-        if (user.isEmpty()) {
-            throw new AccountResourceException("No user was found for this reset key");
+        if (user.isPresent()) {
+            return;
         }
+        throw new AccountResourceException("No user was found for this reset key");
     }
 
     private static class AccountResourceException extends RuntimeException {

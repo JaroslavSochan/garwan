@@ -89,18 +89,18 @@ public class OrderServiceImpl implements OrderService {
 
         orderDTO.getProducts().keySet().forEach(p -> {
             Optional<Product> product = productRepository.findById(p);
-            if(product.isEmpty())
-            {
+            if (product.isPresent()) {
+                productList.add(product.get());
+                totalPrice.updateAndGet(v -> v + product.get().getPrice() * orderDTO.getProducts().get(p));
+            } else {
                 productNotFound.set(true);
                 return;
             }
-            productList.add(product.get());
-            totalPrice.updateAndGet(v -> v + product.get().getPrice() * orderDTO.getProducts().get(p));
         });
 
         Optional<User> user = userRepository.findById(orderDTO.getUserId());
 
-        if(user.isEmpty() || productNotFound.get())
+        if (!user.isPresent() || productNotFound.get())
             return null;
 
         order.setId(orderDTO.getId());
@@ -109,5 +109,11 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalPrice(totalPrice.get());
         order = orderRepository.saveAndFlush(order);
         return orderMapper.toDto(order);
+    }
+
+    @Override
+    public Page<OrderDTO> findAll(Pageable pageable, Long userId) {
+        return orderRepository.findAllByUser_Id(userId, pageable)
+            .map(orderMapper::toDto);
     }
 }

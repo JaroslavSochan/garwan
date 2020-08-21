@@ -1,5 +1,6 @@
 package sk.garwan.web.rest;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,25 +9,40 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 import sk.garwan.GarwanApp;
 import sk.garwan.domain.Product;
+import sk.garwan.domain.User;
 import sk.garwan.repository.ProductRepository;
+import sk.garwan.repository.UserRepository;
+import sk.garwan.security.jwt.TokenProvider;
 import sk.garwan.service.ProductService;
 import sk.garwan.service.dto.ProductDTO;
 import sk.garwan.service.mapper.ProductMapper;
+import sk.garwan.web.rest.errors.ExceptionTranslator;
+import sk.garwan.web.rest.vm.LoginVM;
 
 import javax.persistence.EntityManager;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static sk.garwan.security.jwt.JWTFilter.AUTHORIZATION_HEADER;
+import static sk.garwan.web.rest.OrderResourceIT.createLoggedAdmin;
+import static sk.garwan.web.rest.OrderResourceIT.createLoggedUser;
+import static sk.garwan.web.rest.TestUtil.createFormattingConversionService;
 
 /**
  * Integration tests for the {@link ProductResource} REST controller.
@@ -46,8 +62,8 @@ public class ProductResourceIT {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final List<String> DEFAULT_GALLERY = Arrays.asList("AAAAAAAAAA");
-    private static final List<String> UPDATED_GALLERY = Arrays.asList("BBBBBBBBBB");
+    private static final String DEFAULT_GALLERY = "AAAAAAAAAA";
+    private static final String UPDATED_GALLERY = "BBBBBBBBBB";
 
     @Autowired
     private ProductRepository productRepository;
@@ -71,6 +87,30 @@ public class ProductResourceIT {
     private MockMvc restProductMockMvc;
 
     private Product product;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private Validator validator;
+
+    @Autowired
+    private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
+
+    @Autowired
+    private ExceptionTranslator exceptionTranslator;
+
+    @Autowired
+    private MappingJackson2HttpMessageConverter jacksonMessageConverter;
+
+    @Autowired
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Create an entity for this test.
@@ -102,6 +142,58 @@ public class ProductResourceIT {
         return product;
     }
 
+    private String login() throws Exception {
+        User loggedUser = createLoggedUser(em, passwordEncoder.encode("user"));
+        if (!userRepository.existsByLogin(loggedUser.getLogin()))
+            loggedUser = userRepository.saveAndFlush(loggedUser);
+
+        LoginVM loginVM = new LoginVM();
+        loginVM.setUsername("user");
+        loginVM.setPassword("user");
+
+        final UserJWTController userJWTController = new UserJWTController(tokenProvider, authenticationManagerBuilder);
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(userJWTController)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
+
+        MvcResult result = mockMvc.perform(post("/api/public/authenticate").contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(loginVM)).header("User-Agent", "unit-test"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        String token = new JSONObject(result.getResponse().getContentAsString()).getString("id_token");
+        return token;
+    }
+
+    private String loginAdmin() throws Exception {
+        User loggedAdmin = createLoggedAdmin(em, passwordEncoder.encode("admin"));
+        if (!userRepository.existsByLogin(loggedAdmin.getLogin()))
+            loggedAdmin = userRepository.saveAndFlush(loggedAdmin);
+
+        LoginVM loginVM = new LoginVM();
+        loginVM.setUsername("admin");
+        loginVM.setPassword("admin");
+
+        final UserJWTController userJWTController = new UserJWTController(tokenProvider, authenticationManagerBuilder);
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(userJWTController)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
+
+        MvcResult result = mockMvc.perform(post("/api/public/authenticate").contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(loginVM)).header("User-Agent", "unit-test"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        String token = new JSONObject(result.getResponse().getContentAsString()).getString("id_token");
+        return token;
+    }
+
     @BeforeEach
     public void initTest() {
         product = createEntity(em);
@@ -113,7 +205,7 @@ public class ProductResourceIT {
         int databaseSizeBeforeCreate = productRepository.findAll().size();
         // Create the Product
         ProductDTO productDTO = productMapper.toDto(product);
-        restProductMockMvc.perform(post("/api/products")
+        restProductMockMvc.perform(post("/api/private/products").header(AUTHORIZATION_HEADER, "Bearer " + loginAdmin())
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(productDTO)))
             .andExpect(status().isCreated());
@@ -138,7 +230,7 @@ public class ProductResourceIT {
         ProductDTO productDTO = productMapper.toDto(product);
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restProductMockMvc.perform(post("/api/products")
+        restProductMockMvc.perform(post("/api/private/products").header(AUTHORIZATION_HEADER, "Bearer " + loginAdmin())
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(productDTO)))
             .andExpect(status().isBadRequest());
@@ -159,7 +251,7 @@ public class ProductResourceIT {
         // Create the Product, which fails.
         ProductDTO productDTO = productMapper.toDto(product);
 
-        restProductMockMvc.perform(post("/api/products")
+        restProductMockMvc.perform(post("/api/private/products").header(AUTHORIZATION_HEADER, "Bearer " + loginAdmin())
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(productDTO)))
             .andExpect(status().isBadRequest());
@@ -179,7 +271,7 @@ public class ProductResourceIT {
         ProductDTO productDTO = productMapper.toDto(product);
 
 
-        restProductMockMvc.perform(post("/api/products")
+        restProductMockMvc.perform(post("/api/private/products").header(AUTHORIZATION_HEADER, "Bearer " + loginAdmin())
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(productDTO)))
             .andExpect(status().isBadRequest());
@@ -195,14 +287,12 @@ public class ProductResourceIT {
         productRepository.saveAndFlush(product);
 
         // Get all the productList
-        restProductMockMvc.perform(get("/api/products?sort=id,desc"))
+        restProductMockMvc.perform(get("/api/public/products?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(product.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE)))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
-            .andExpect(jsonPath("$.[*].gallery").value(hasItem(DEFAULT_GALLERY)));
+            .andExpect(jsonPath("$.content.[*].id").value(hasItem(product.getId().intValue())))
+            .andExpect(jsonPath("$.content.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.content.[*].price").value(hasItem(DEFAULT_PRICE)));
     }
 
     @Test
@@ -249,7 +339,7 @@ public class ProductResourceIT {
             .gallery(UPDATED_GALLERY);
         ProductDTO productDTO = productMapper.toDto(updatedProduct);
 
-        restProductMockMvc.perform(put("/api/products")
+        restProductMockMvc.perform(put("/api/private/products").header(AUTHORIZATION_HEADER, "Bearer " + loginAdmin())
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(productDTO)))
             .andExpect(status().isOk());
@@ -273,7 +363,7 @@ public class ProductResourceIT {
         ProductDTO productDTO = productMapper.toDto(product);
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restProductMockMvc.perform(put("/api/products")
+        restProductMockMvc.perform(put("/api/private/products").header(AUTHORIZATION_HEADER, "Bearer " + loginAdmin())
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(productDTO)))
             .andExpect(status().isBadRequest());
@@ -292,7 +382,7 @@ public class ProductResourceIT {
         int databaseSizeBeforeDelete = productRepository.findAll().size();
 
         // Delete the product
-        restProductMockMvc.perform(delete("/api/products/{id}", product.getId())
+        restProductMockMvc.perform(delete("/api/private/products/{id}", product.getId()).header(AUTHORIZATION_HEADER, "Bearer " + loginAdmin())
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 

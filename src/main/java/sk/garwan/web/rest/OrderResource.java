@@ -2,7 +2,6 @@ package sk.garwan.web.rest;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,9 +19,9 @@ import sk.garwan.service.dto.OrderDTO;
 import sk.garwan.web.rest.errors.BadRequestAlertException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Optional;
 
 /**
  * REST controller for managing {@link sk.garwan.domain.Order}.
@@ -99,17 +98,13 @@ public class OrderResource {
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
-    /**
-     * {@code GET  /orders/:id} : get the "id" order.
-     *
-     * @param id the id of the orderDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the orderDTO, or with status {@code 404 (Not Found)}.
-     */
-    @GetMapping("/public/orders/{id}")
-    public ResponseEntity<OrderDTO> getOrder(@PathVariable Long id) {
-        log.debug("REST request to get Order : {}", id);
-        Optional<OrderDTO> orderDTO = orderService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(orderDTO);
+    @Secured(AuthoritiesConstants.USER)
+    @GetMapping("/private/orders/{userId}")
+    public ResponseEntity<Page<OrderDTO>> getAllOrdersForUser(Pageable pageable, @NotNull @PathVariable Long userId) {
+        log.debug("REST request to get a page of Orders");
+        Page<OrderDTO> page = orderService.findAll(pageable, userId);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page);
     }
 
     /**

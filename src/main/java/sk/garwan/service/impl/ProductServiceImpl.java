@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import sk.garwan.domain.Product;
 import sk.garwan.repository.ProductRepository;
 import sk.garwan.service.ProductService;
-import sk.garwan.service.dto.ProductDetailDTO;
 import sk.garwan.service.dto.ProductDTO;
+import sk.garwan.service.dto.ProductDetailDTO;
 import sk.garwan.service.dto.ProductSpecificDTO;
 import sk.garwan.service.mapper.ProductDetailMapper;
 import sk.garwan.service.mapper.ProductMapper;
@@ -37,8 +37,9 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * Instantiates a new Product service.
-     * @param productRepository the product repository
-     * @param productMapper     the product mapper
+     *
+     * @param productRepository     the product repository
+     * @param productMapper         the product mapper
      * @param productDetailMapper
      * @param productSpecificMapper
      */

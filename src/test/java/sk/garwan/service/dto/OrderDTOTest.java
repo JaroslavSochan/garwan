@@ -1,7 +1,6 @@
 package sk.garwan.service.dto;
 
 import org.junit.jupiter.api.Test;
-import sk.garwan.web.rest.TestUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

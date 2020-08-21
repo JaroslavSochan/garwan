@@ -2,7 +2,6 @@ package sk.garwan.service.dto;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.util.Hashtable;
 import java.util.Objects;
 
@@ -12,10 +11,6 @@ import java.util.Objects;
 public class OrderDTO implements Serializable {
 
     private Long id;
-
-    private Double totalPrice;
-
-    private ZonedDateTime createdAt;
 
     @NotNull
     private Hashtable<Long, Integer> products;
@@ -29,22 +24,6 @@ public class OrderDTO implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(ZonedDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public Hashtable<Long, Integer> getProducts() {
@@ -77,7 +56,7 @@ public class OrderDTO implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, totalPrice, createdAt, products, userId);
+        return Objects.hash(id, products, userId);
     }
 
     // prettier-ignore
@@ -85,8 +64,6 @@ public class OrderDTO implements Serializable {
     public String toString() {
         return "OrderDTO{" +
             "id=" + getId() +
-            ", totalPrice=" + getTotalPrice() +
-            ", createdAt='" + getCreatedAt() + "'" +
             "}";
     }
 }

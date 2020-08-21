@@ -7,7 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,9 +36,8 @@ public class Product implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @ElementCollection
     @Column(name = "gallery")
-    private List<String> gallery;
+    private String gallery;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -103,15 +101,15 @@ public class Product implements Serializable {
         return this;
     }
 
-    public List<String> getGallery() {
+    public String getGallery() {
         return gallery;
     }
 
-    public void setGallery(List<String> gallery) {
+    public void setGallery(String gallery) {
         this.gallery = gallery;
     }
 
-    public Product gallery(List<String> gallery) {
+    public Product gallery(String gallery) {
         this.gallery = gallery;
         return this;
     }
