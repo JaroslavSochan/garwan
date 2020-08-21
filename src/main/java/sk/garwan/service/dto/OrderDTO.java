@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Hashtable;
+import java.util.Objects;
 
 /**
  * A DTO for the {@link sk.garwan.domain.Order} entity.
@@ -12,12 +13,15 @@ public class OrderDTO implements Serializable {
 
     private Long id;
 
-    @NotNull
     private Double totalPrice;
 
     private ZonedDateTime createdAt;
 
+    @NotNull
     private Hashtable<Long, Integer> products;
+
+    @NotNull
+    private Long userId;
 
     public Long getId() {
         return id;
@@ -51,6 +55,14 @@ public class OrderDTO implements Serializable {
         this.products = products;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -65,7 +77,7 @@ public class OrderDTO implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(id, totalPrice, createdAt, products, userId);
     }
 
     // prettier-ignore

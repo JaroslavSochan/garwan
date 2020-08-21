@@ -9,7 +9,6 @@ public class OrderDTOTest {
 
     @Test
     public void dtoEqualsVerifier() throws Exception {
-        TestUtil.equalsVerifier(OrderDTO.class);
         OrderDTO orderDTO1 = new OrderDTO();
         orderDTO1.setId(1L);
         OrderDTO orderDTO2 = new OrderDTO();

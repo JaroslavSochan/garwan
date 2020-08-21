@@ -20,6 +20,7 @@ import sk.garwan.service.dto.ProductDTO;
 import sk.garwan.service.mapper.ProductMapper;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,8 +46,8 @@ public class ProductResourceIT {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final String DEFAULT_GALLERY = "AAAAAAAAAA";
-    private static final String UPDATED_GALLERY = "BBBBBBBBBB";
+    private static final List<String> DEFAULT_GALLERY = Arrays.asList("AAAAAAAAAA");
+    private static final List<String> UPDATED_GALLERY = Arrays.asList("BBBBBBBBBB");
 
     @Autowired
     private ProductRepository productRepository;
@@ -157,7 +158,6 @@ public class ProductResourceIT {
 
         // Create the Product, which fails.
         ProductDTO productDTO = productMapper.toDto(product);
-
 
         restProductMockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)

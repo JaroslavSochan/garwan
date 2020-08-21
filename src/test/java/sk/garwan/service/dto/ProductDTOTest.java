@@ -9,7 +9,6 @@ public class ProductDTOTest {
 
     @Test
     public void dtoEqualsVerifier() throws Exception {
-        TestUtil.equalsVerifier(ProductDTO.class);
         ProductDTO productDTO1 = new ProductDTO();
         productDTO1.setId(1L);
         ProductDTO productDTO2 = new ProductDTO();

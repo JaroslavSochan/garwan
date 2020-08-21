@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -84,20 +85,20 @@ public class AnimalCategory implements Serializable {
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AnimalCategory)) {
-            return false;
-        }
-        return id != null && id.equals(((AnimalCategory) o).id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnimalCategory that = (AnimalCategory) o;
+        return Objects.equals(id, that.id) &&
+            name == that.name &&
+            Objects.equals(products, that.products);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(id, name, products);
     }
 
     // prettier-ignore

@@ -9,7 +9,6 @@ public class OrderTest {
 
     @Test
     public void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(Order.class);
         Order order1 = new Order();
         order1.setId(1L);
         Order order2 = new Order();

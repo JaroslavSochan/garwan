@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -35,8 +37,9 @@ public class Product implements Serializable {
     @Column(name = "description")
     private String description;
 
+    @ElementCollection
     @Column(name = "gallery")
-    private String gallery;
+    private List<String> gallery;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -100,15 +103,15 @@ public class Product implements Serializable {
         return this;
     }
 
-    public String getGallery() {
+    public List<String> getGallery() {
         return gallery;
     }
 
-    public void setGallery(String gallery) {
+    public void setGallery(List<String> gallery) {
         this.gallery = gallery;
     }
 
-    public Product gallery(String gallery) {
+    public Product gallery(List<String> gallery) {
         this.gallery = gallery;
         return this;
     }
@@ -164,20 +167,24 @@ public class Product implements Serializable {
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Product)) {
-            return false;
-        }
-        return id != null && id.equals(((Product) o).id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id) &&
+            Objects.equals(name, product.name) &&
+            Objects.equals(price, product.price) &&
+            Objects.equals(description, product.description) &&
+            Objects.equals(gallery, product.gallery) &&
+            Objects.equals(orders, product.orders) &&
+            Objects.equals(animalCategories, product.animalCategories);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(id, name, price, description, gallery, orders, animalCategories);
     }
 
     // prettier-ignore

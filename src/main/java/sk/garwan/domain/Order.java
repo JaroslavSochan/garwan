@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -104,20 +105,30 @@ public class Order implements Serializable {
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Order)) {
-            return false;
-        }
-        return id != null && id.equals(((Order) o).id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(id, order.id) &&
+            Objects.equals(totalPrice, order.totalPrice) &&
+            Objects.equals(createdAt, order.createdAt) &&
+            Objects.equals(products, order.products) &&
+            Objects.equals(user, order.user);
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(id, totalPrice, createdAt, products, user);
     }
 
     // prettier-ignore

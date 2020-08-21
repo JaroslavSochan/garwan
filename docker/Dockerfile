@@ -7,7 +7,8 @@ ARG profile=dev
 COPY ./src /app-build/src
 COPY ./pom.xml /app-build
 COPY ./checkstyle.xml /app-build
-COPY ./src/main/resources/logback-spring-json.xml /app-build/src/main/resources/logback-spring.xml
+COPY ./sonar-project.properties /app-build
+COPY ./src/main/resources/logback-spring.xml /app-build/src/main/resources/logback-spring.xml
 
 RUN mvn package -P${profile}
 

@@ -4,6 +4,7 @@ import sk.garwan.domain.enumeration.Category;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A DTO for the {@link sk.garwan.domain.AnimalCategory} entity.
@@ -34,19 +35,16 @@ public class AnimalCategoryDTO implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AnimalCategoryDTO)) {
-            return false;
-        }
-
-        return id != null && id.equals(((AnimalCategoryDTO) o).id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnimalCategoryDTO that = (AnimalCategoryDTO) o;
+        return Objects.equals(id, that.id) &&
+            name == that.name;
     }
 
     @Override
     public int hashCode() {
-        return 31;
+        return Objects.hash(id, name);
     }
 
     // prettier-ignore

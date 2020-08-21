@@ -9,7 +9,6 @@ public class AnimalCategoryDTOTest {
 
     @Test
     public void dtoEqualsVerifier() throws Exception {
-        TestUtil.equalsVerifier(AnimalCategoryDTO.class);
         AnimalCategoryDTO animalCategoryDTO1 = new AnimalCategoryDTO();
         animalCategoryDTO1.setId(1L);
         AnimalCategoryDTO animalCategoryDTO2 = new AnimalCategoryDTO();

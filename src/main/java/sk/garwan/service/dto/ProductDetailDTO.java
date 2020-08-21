@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * A DTO for the {@link sk.garwan.domain.Product} entity.
  */
-public class ProductDTO implements Serializable {
+public class ProductDetailDTO implements Serializable {
 
     private Long id;
 
@@ -23,8 +23,6 @@ public class ProductDTO implements Serializable {
     private String description;
 
     private List<String> gallery;
-
-    private Set<OrderDTO> orders = new HashSet<>();
 
     private Set<AnimalCategoryDTO> animalCategories = new HashSet<>();
 
@@ -68,14 +66,6 @@ public class ProductDTO implements Serializable {
         this.gallery = gallery;
     }
 
-    public Set<OrderDTO> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(Set<OrderDTO> orders) {
-        this.orders = orders;
-    }
-
     public Set<AnimalCategoryDTO> getAnimalCategories() {
         return animalCategories;
     }
@@ -88,19 +78,18 @@ public class ProductDTO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProductDTO that = (ProductDTO) o;
+        ProductDetailDTO that = (ProductDetailDTO) o;
         return Objects.equals(id, that.id) &&
             Objects.equals(name, that.name) &&
             Objects.equals(price, that.price) &&
             Objects.equals(description, that.description) &&
             Objects.equals(gallery, that.gallery) &&
-            Objects.equals(orders, that.orders) &&
             Objects.equals(animalCategories, that.animalCategories);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price, description, gallery, orders, animalCategories);
+        return Objects.hash(id, name, price, description, gallery, animalCategories);
     }
 
     // prettier-ignore
@@ -112,7 +101,6 @@ public class ProductDTO implements Serializable {
             ", price=" + getPrice() +
             ", description='" + getDescription() + "'" +
             ", gallery='" + getGallery() + "'" +
-            ", orders='" + getOrders() + "'" +
             ", animalCategories='" + getAnimalCategories() + "'" +
             "}";
     }

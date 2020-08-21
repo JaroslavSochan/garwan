@@ -91,11 +91,11 @@ public class AnimalCategoryResource {
      */
     @Secured(AuthoritiesConstants.ADMIN)
     @GetMapping("/animal-categories")
-    public ResponseEntity<List<AnimalCategoryDTO>> getAllAnimalCategories(Pageable pageable) {
+    public ResponseEntity<Page<AnimalCategoryDTO>> getAllAnimalCategories(Pageable pageable) {
         log.debug("REST request to get a page of AnimalCategories");
         Page<AnimalCategoryDTO> page = animalCategoryService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok().headers(headers).body(page);
     }
 
     /**

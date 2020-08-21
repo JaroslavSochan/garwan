@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import sk.garwan.security.AuthoritiesConstants;
 import sk.garwan.service.ProductService;
+import sk.garwan.service.dto.ProductDetailDTO;
 import sk.garwan.service.dto.ProductDTO;
+import sk.garwan.service.dto.ProductSpecificDTO;
 import sk.garwan.web.rest.errors.BadRequestAlertException;
 
 import javax.validation.Valid;
@@ -50,12 +52,12 @@ public class ProductResource {
      */
     @Secured(AuthoritiesConstants.ADMIN)
     @PostMapping("/private/products")
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) throws URISyntaxException {
+    public ResponseEntity<ProductDetailDTO> createProduct(@Valid @RequestBody ProductDetailDTO productDTO) throws URISyntaxException {
         log.debug("REST request to save Product : {}", productDTO);
         if (productDTO.getId() != null) {
             throw new BadRequestAlertException("A new product cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        ProductDTO result = productService.save(productDTO);
+        ProductDetailDTO result = productService.save(productDTO);
         return ResponseEntity.created(new URI("/api/products/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -71,12 +73,12 @@ public class ProductResource {
      */
     @Secured(AuthoritiesConstants.ADMIN)
     @PutMapping("/private/products")
-    public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDetailDTO> updateProduct(@Valid @RequestBody ProductDetailDTO productDTO) {
         log.debug("REST request to update Product : {}", productDTO);
         if (productDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        ProductDTO result = productService.save(productDTO);
+        ProductDetailDTO result = productService.save(productDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, productDTO.getId().toString()))
             .body(result);
@@ -89,27 +91,27 @@ public class ProductResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
      */
     @GetMapping("/public/products")
-    public ResponseEntity<Page<ProductDTO>> getAllProducts(Pageable pageable) {
+    public ResponseEntity<Page<ProductSpecificDTO>> getAllProducts(Pageable pageable) {
         log.debug("REST request to get a page of Products");
-        Page<ProductDTO> page = productService.findAll(pageable);
+        Page<ProductSpecificDTO> page = productService.findAll(pageable);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
     @GetMapping("/public/products/{priceMin}/{priceMax}")
-    public ResponseEntity<Page<ProductDTO>> getAllProductsByPrice(Pageable pageable, @PathVariable Double priceMin, @PathVariable Double priceMax) {
+    public ResponseEntity<Page<ProductSpecificDTO>> getAllProductsByPrice(Pageable pageable, @PathVariable Double priceMin, @PathVariable Double priceMax) {
         log.debug("REST request to get a page of Products");
-        Page<ProductDTO> page = productService.findAllByPrice(pageable, priceMin, priceMax);
+        Page<ProductSpecificDTO> page = productService.findAllByPrice(pageable, priceMin, priceMax);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page);
     }
 
     @GetMapping("/public/products/startsWith/{startsWith}")
-    public ResponseEntity<Page<ProductDTO>> getAllProductsByPrice(Pageable pageable, @NotBlank @PathVariable String startsWith) {
+    public ResponseEntity<Page<ProductSpecificDTO>> getAllProductsByPrice(Pageable pageable, @NotBlank @PathVariable String startsWith) {
         log.debug("REST request to get a page of Products");
-        Page<ProductDTO> page = productService.findAllByName(pageable, startsWith);
+        Page<ProductSpecificDTO> page = productService.findAllByName(pageable, startsWith);
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page);

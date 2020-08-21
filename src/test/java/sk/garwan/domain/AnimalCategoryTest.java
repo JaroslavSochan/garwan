@@ -9,7 +9,6 @@ public class AnimalCategoryTest {
 
     @Test
     public void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(AnimalCategory.class);
         AnimalCategory animalCategory1 = new AnimalCategory();
         animalCategory1.setId(1L);
         AnimalCategory animalCategory2 = new AnimalCategory();

@@ -43,5 +43,5 @@ public interface OrderService {
      */
     void delete(Long id);
 
-    OrderDTO createOrder(OrderDTO orderDTO);
+    OrderDTO createOrUpdateOrder(OrderDTO orderDTO);
 }

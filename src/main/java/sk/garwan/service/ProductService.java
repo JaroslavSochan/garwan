@@ -3,7 +3,10 @@ package sk.garwan.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sk.garwan.service.dto.ProductDTO;
+import sk.garwan.service.dto.ProductDetailDTO;
+import sk.garwan.service.dto.ProductSpecificDTO;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 /**
@@ -17,7 +20,7 @@ public interface ProductService {
      * @param productDTO the entity to save.
      * @return the persisted entity.
      */
-    ProductDTO save(ProductDTO productDTO);
+    ProductDetailDTO save(@Valid ProductDetailDTO productDTO);
 
     /**
      * Get all the products.
@@ -25,7 +28,7 @@ public interface ProductService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<ProductDTO> findAll(Pageable pageable);
+    Page<ProductSpecificDTO> findAll(Pageable pageable);
 
     /**
      * Get the "id" product.
@@ -42,7 +45,7 @@ public interface ProductService {
      */
     void delete(Long id);
 
-    Page<ProductDTO> findAllByPrice(Pageable pageable, Double priceMin, Double priceMax);
+    Page<ProductSpecificDTO> findAllByPrice(Pageable pageable, Double priceMin, Double priceMax);
 
-    Page<ProductDTO> findAllByName(Pageable pageable, String startsWith);
+    Page<ProductSpecificDTO> findAllByName(Pageable pageable, String startsWith);
 }
